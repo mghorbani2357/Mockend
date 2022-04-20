@@ -26,5 +26,5 @@ setup(name='mockend',
       classifiers=[k for k in open('CLASSIFIERS').read().split('\n') if k],
       long_description=open('README.rst').read(),
       long_description_content_type='text/x-rst',
-      description='Rate limiting for callable functions',
+      description='Mockend is a simple tool for mocking endpoints',
       )
