@@ -5,18 +5,19 @@ import time
 from flask import Flask, abort, Response, request
 
 app = Flask(__name__)
-all_methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD', 'TRACE']
+all_methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 
 
-def validate_path(configuration):
+def validate_path(path, configuration):
     """
     Args:
+        path(str): incoming request path
         configuration(dict): config dict
     Returns:
         (dict|none): returns config if path is valid, None otherwise
 
     """
-    subpaths = list(filter(''.__ne__, request.path.split('/')))
+    subpaths = list(filter(''.__ne__, path.split('/')))
 
     for sub_path in subpaths:
         if sub_path in configuration.keys():
@@ -24,7 +25,7 @@ def validate_path(configuration):
         else:
             return None
 
-    return configuration
+    return configuration, subpaths[-1]
 
 
 def generate_chunk(data, chunk_size):
@@ -48,46 +49,65 @@ def mockend_service(path):
     Returns:
         (Response): returns flask response
     """
-    path_config = validate_path(config)
+    path_config, identifier = validate_path(path, config)
 
     if path_config:
         time.sleep(path_config.get('delay', 0))
+
         if request.method.lower() in path_config:
-            path_config = path_config.get(request.method.lower())
-
-            if abortion_code := path_config.get('abort', None):
-                abort(abortion_code)
-
-            if path_config.get("dummy", False):
-                return Response(
-                    response=request.data,
-                    status=path_config.get("status"),
-                    headers=request.headers,
-                    content_type=request.content_type,
-                    mimetype=request.mimetype,
-                    direct_passthrough=path_config.get("direct_passthrough"),
-                )
-            else:
-                response_body = path_config.get('response')
-                response_body = json.dumps(response_body) if type(response_body) in (dict, list) else response_body
-                if path_config.get("chunked", False):
-                    response_body = generate_chunk(response_body, path_config.get("chunk_size", 1))
-
-                return Response(
-                    response=response_body,
-                    status=path_config.get("status"),
-                    headers=path_config.get("headers"),
-                    mimetype=path_config.get("mimetype"),
-                    content_type=path_config.get("content_type"),
-                    direct_passthrough=path_config.get("direct_passthrough"),
-                )
+            method_config = path_config.get(request.method.lower())
         else:
-            abort(405)
+            return abort(405)
+
+        if abortion_code := method_config.get('abort', None):
+            return abort(abortion_code)
+
+        if method_config.get("dummy", False):
+            return Response(
+                response=request.data,
+                status=method_config.get("status"),
+                headers=request.headers,
+                content_type=request.content_type,
+                mimetype=request.mimetype,
+                direct_passthrough=method_config.get("direct_passthrough"),
+            )
+
+        response_body = method_config.get('response')
+        response_body = json.dumps(response_body) if type(response_body) in (dict, list) else response_body
+        data = json.loads(request.data) if request.data else {}
+        if path_config.get('interactive', False):
+            if 'data' not in path_config:
+                path_config['data'] = {}
+            if request.method.lower() == 'post':
+                response_body = json.dumps(path_config['data'])
+
+            elif request.method.lower() == 'post':
+                if identifier not in path_config.get('data', {}).keys():
+                    path_config['data'][identifier] = {}
+                path_config['data'][identifier].update(data)
+
+            elif request.method.lower() in ('put', 'patch'):
+                path_config['data'][identifier] = data
+
+            elif request.method.lower() == 'delete':
+                del path_config['data'][identifier]
+
+        if method_config.get("chunked", False):
+            response_body = generate_chunk(response_body, method_config.get("chunk_size", 1))
+
+        return Response(
+            response=response_body,
+            status=method_config.get("status"),
+            headers=method_config.get("headers"),
+            mimetype=method_config.get("mimetype"),
+            content_type=method_config.get("content_type"),
+            direct_passthrough=method_config.get("direct_passthrough"),
+        )
     else:
         abort(404)
 
 
-parser = argparse.ArgumentParser(prog='PROG', description='Model builder according to a given configuration.')
+parser = argparse.ArgumentParser(prog='PROG', description='Mockend Service')
 parser.add_argument('-c', '--config', metavar='', type=str, required=True, default='config.json', help='Path to the configuration file.')
 parser.add_argument('-i', '--host', metavar='', type=str, required=False, default='localhost', help='Host address')
 parser.add_argument('-p', '--port', metavar='', type=int, required=False, default=5555, help='Port number')
