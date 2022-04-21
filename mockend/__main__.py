@@ -27,6 +27,18 @@ def validate_path(configuration):
     return configuration
 
 
+def generate_chunk(data, chunk_size):
+    """
+    Args:
+        data(str): incoming request data
+        chunk_size(int): chunk size
+    Returns:
+        (str): returns chunked data
+    """
+    for i in range(0, len(data), chunk_size):
+        yield data[i:i + chunk_size]
+
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>', methods=all_methods)
 def mockend_service(path):
@@ -54,8 +66,12 @@ def mockend_service(path):
                 )
             else:
                 response_body = path_config.get('response')
+                response_body = json.dumps(response_body) if type(response_body) in (dict, list) else response_body
+                if path_config.get("chunked", False):
+                    response_body = generate_chunk(response_body, path_config.get("chunk_size", 1))
+
                 return Response(
-                    response=json.dumps(response_body) if type(response_body) in (dict, list) else response_body,
+                    response=response_body,
                     status=path_config.get("status"),
                     headers=path_config.get("headers"),
                     mimetype=path_config.get("mimetype"),
