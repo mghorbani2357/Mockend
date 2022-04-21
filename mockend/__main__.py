@@ -1,5 +1,7 @@
 import argparse
 import json
+import time
+
 from flask import Flask, abort, Response, request
 
 app = Flask(__name__)
@@ -40,6 +42,7 @@ def mockend_service(path):
         if request.method.lower() in path_config:
             path_config = path_config.get(request.method.lower())
             response_body = path_config.get('response')
+            time.sleep(path_config.get('delay', 0))
             return Response(
                 response=json.dumps(response_body) if type(response_body) in (dict, list) else response_body,
                 status=path_config.get("status"),
