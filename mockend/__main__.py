@@ -78,8 +78,15 @@ def mockend_service(path):
         if path_config.get('interactive', False):
             if 'data' not in path_config:
                 path_config['data'] = {}
-            if request.method.lower() == 'post':
-                response_body = json.dumps(path_config['data'])
+            if request.method.lower() == 'get':
+                if path_config.get('pagination', False):
+                    ordered_keys = sorted(list(data.keys()))
+                    pagination_keys = ordered_keys[ordered_keys.index(request.args.get('start')):
+                                                   ordered_keys.index(request.args.get('start')) +
+                                                   int(request.args.get('limit'))]
+                    response_body = [path_config['data'].get(key) for key in pagination_keys]
+                else:
+                    response_body = json.dumps(path_config['data'])
 
             elif request.method.lower() == 'post':
                 if identifier not in path_config.get('data', {}).keys():
