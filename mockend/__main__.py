@@ -41,16 +41,27 @@ def mockend_service(path):
     if path_config:
         if request.method.lower() in path_config:
             path_config = path_config.get(request.method.lower())
-            response_body = path_config.get('response')
             time.sleep(path_config.get('delay', 0))
-            return Response(
-                response=json.dumps(response_body) if type(response_body) in (dict, list) else response_body,
-                status=path_config.get("status"),
-                headers=path_config.get("headers"),
-                mimetype=path_config.get("mimetype"),
-                content_type=path_config.get("content_type"),
-                direct_passthrough=path_config.get("direct_passthrough"),
-            )
+
+            if path_config.get("dummy", False):
+                return Response(
+                    response=request.data,
+                    status=path_config.get("status"),
+                    headers=request.headers,
+                    content_type=request.content_type,
+                    mimetype=request.mimetype,
+                    direct_passthrough=path_config.get("direct_passthrough"),
+                )
+            else:
+                response_body = path_config.get('response')
+                return Response(
+                    response=json.dumps(response_body) if type(response_body) in (dict, list) else response_body,
+                    status=path_config.get("status"),
+                    headers=path_config.get("headers"),
+                    mimetype=path_config.get("mimetype"),
+                    content_type=path_config.get("content_type"),
+                    direct_passthrough=path_config.get("direct_passthrough"),
+                )
         else:
             abort(405)
     else:
