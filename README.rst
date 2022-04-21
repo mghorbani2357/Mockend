@@ -1,24 +1,25 @@
-.. |license| image:: https://img.shields.io/github/license/mghorbani2357/Mockend
-    :target: https://raw.githubusercontent.com/mghorbani2357/Mockend/master/LICENSE
+.. |license| image:: https://img.shields.io/github/license/mghorbani2357/mockend
+    :target: https://raw.githubusercontent.com/mghorbani2357/mockend/master/LICENSE
     :alt: GitHub Licence
 
-.. |downloadrate| image:: https://img.shields.io/pypi/dm/Mockend
-    :target: https://pypistats.org/packages/Mockend
+.. |downloadrate| image:: https://img.shields.io/pypi/dm/mockend
+    :target: https://pypistats.org/packages/mockend
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/Mockend  
-    :target: https://pypi.python.org/pypi/Mockend
+.. |wheel| image:: https://img.shields.io/pypi/wheel/mockend  
+    :target: https://pypi.python.org/pypi/mockend
     :alt: PyPI - Wheel
 
-.. |pypiversion| image:: https://img.shields.io/pypi/v/Mockend  
-    :target: https://pypi.python.org/pypi/Mockend
+.. |pypiversion| image:: https://img.shields.io/pypi/v/mockend  
+    :target: https://pypi.python.org/pypi/mockend
     :alt: PyPI
 
-.. |format| image:: https://img.shields.io/pypi/format/Mockend
-    :target: https://pypi.python.org/pypi/Mockend
+.. |format| image:: https://img.shields.io/pypi/format/mockend
+    :target: https://pypi.python.org/pypi/mockend
     :alt: PyPI - Format
 
-.. |downloads| image:: https://static.pepy.tech/personalized-badge/Mockend?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Downloads
-    :target: https://pepy.tech/project/Mockend
+.. |downloads| image:: https://static.pepy.tech/personalized-badge/mockend?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Downloads
+    :target: https://pepy.tech/project/mockend
+
 
 .. |lastcommit| image:: https://img.shields.io/github/last-commit/mghorbani2357/Mockend 
     :alt: GitHub last commit
