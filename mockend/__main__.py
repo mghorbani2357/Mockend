@@ -51,9 +51,12 @@ def mockend_service(path):
     path_config = validate_path(config)
 
     if path_config:
+        time.sleep(path_config.get('delay', 0))
         if request.method.lower() in path_config:
             path_config = path_config.get(request.method.lower())
-            time.sleep(path_config.get('delay', 0))
+
+            if abortion_code := path_config.get('abort', None):
+                abort(abortion_code)
 
             if path_config.get("dummy", False):
                 return Response(
