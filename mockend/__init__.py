@@ -25,13 +25,15 @@ def validate_path(path, configuration):
     """
     subpaths = list(filter(''.__ne__, path.split('/')))
 
-    for sub_path in subpaths:
+    for index, sub_path in enumerate(subpaths):
         if sub_path in configuration.keys():
             configuration = configuration.get(sub_path)
+            if configuration.get("interactive", False) and index + 1 == len(subpaths) - 1:
+                return subpaths, configuration, subpaths[index + 1]
         else:
             return None, None
 
-    return configuration, subpaths[-1]
+    return subpaths, configuration, None
 
 
 def generate_chunk(data, chunk_size):
@@ -55,7 +57,7 @@ def mockend_service(path):
     Returns:
         (Response): returns flask response
     """
-    path_config, identifier = validate_path(path, config)
+    paths, path_config, identifier = validate_path(path, config)
 
     if path_config:
         time.sleep(path_config.get('delay', 0))
@@ -72,8 +74,8 @@ def mockend_service(path):
             return Response(
                 response=request.data,
                 status=method_config.get("status"),
-                headers=request.headers,
-                content_type=request.content_type,
+                headers=request.headers.__dict__,
+                content_type=method_config.get("content_type"),
                 mimetype=request.mimetype,
                 direct_passthrough=method_config.get("direct_passthrough"),
             )
@@ -85,14 +87,19 @@ def mockend_service(path):
             if 'data' not in path_config:
                 path_config['data'] = {}
             if request.method.lower() == 'get':
-                if path_config.get('pagination', False):
-                    ordered_keys = sorted(list(data.keys()))
-                    pagination_keys = ordered_keys[ordered_keys.index(request.args.get('start')):
-                                                   ordered_keys.index(request.args.get('start')) +
-                                                   int(request.args.get('limit'))]
-                    response_body = [path_config['data'].get(key) for key in pagination_keys]
+                if paths[-1] == identifier:
+                    if identifier not in path_config['data']:
+                        abort(404)
+                    response_body = json.dumps(path_config['data'].get(identifier))
                 else:
-                    response_body = json.dumps(path_config['data'])
+                    if path_config.get('pagination', False):
+                        ordered_keys = sorted(list(data.keys()))
+                        pagination_keys = ordered_keys[ordered_keys.index(request.args.get('start')):
+                                                       ordered_keys.index(request.args.get('start')) +
+                                                       int(request.args.get('limit'))]
+                        response_body = [path_config['data'].get(key) for key in pagination_keys]
+                    else:
+                        response_body = json.dumps(path_config['data'])
 
             elif request.method.lower() == 'post':
                 if identifier not in path_config.get('data', {}).keys():

@@ -1,7 +1,7 @@
 import json
 import time
 from unittest import TestCase
-from mockend import config, app
+from mockend import config, app, validate_path
 
 
 class TestEndPoints(TestCase):
@@ -37,7 +37,7 @@ class TestEndPoints(TestCase):
 
         response = json.dumps({
             "name": "John Doe",
-            "email": "J.Doe@test.com"
+            "email": "J.Doe@email.com"
         }).encode('utf-8')
 
         self.assertEqual(self.app.get('/users/JohnDoe').data, response)
@@ -109,12 +109,156 @@ class TestEndPoints(TestCase):
 
         self.assertEqual(self.app.get('/users').status_code, 503)
 
+    def test_dummy_mode(self):
+        config.update({
+            "users": {
+                "post": {
+                    "dummy": True
+                }
+            }
+        })
+
+        request_body = json.dumps({
+            "user_ids": [1, 2, 3]
+        }).encode('utf-8')
+
+        self.assertEqual(self.app.post('/users', data=request_body).data, request_body)
+
 
 class TestInteractiveMode(TestCase):
     def setUp(self):
         self.app = app.test_client()
 
+    def test_interactive_insert(self):
+        config.update({
+            "users": {
+                "interactive": True,
+                "get": {},
+                "post": {}
+            }
+        })
 
-class TestDummyMode(TestCase):
-    def setUp(self):
-        self.app = app.test_client()
+        self.app.post('/users/JohnDoe', data=json.dumps(
+            {
+                "name": "John Doe",
+                "email": "J.Don@email.com"
+            }
+        ).encode('utf-8'))
+
+        self.assertEqual(self.app.get('/users').data, json.dumps(
+            {
+                "JohnDoe": {
+                    "name": "John Doe",
+                    "email": "J.Don@email.com"
+                }
+            }
+        ).encode('utf-8'))
+
+        self.assertEqual(self.app.get('/users/JohnDoe').data, json.dumps(
+            {
+
+                "name": "John Doe",
+                "email": "J.Don@email.com"
+
+            }
+        ).encode('utf-8'))
+
+    def test_interactive_update(self):
+        config.update({
+            "users": {
+                "interactive": True,
+                "get": {},
+                "post": {},
+                "put": {},
+            }
+        })
+
+        self.app.post('/users/JohnDoe', data=json.dumps(
+            {
+                "name": "John Doe",
+                "email": "J.Don@email.com"
+            }
+        ).encode('utf-8'))
+
+        self.app.put('/users/JohnDoe', data=json.dumps(
+            {
+                "name": "John Doe",
+                "email": "J.Don@gmail.com"
+            }
+        ).encode('utf-8'))
+
+        self.assertEqual(self.app.get('/users/JohnDoe').data, json.dumps(
+            {
+
+                "name": "John Doe",
+                "email": "J.Don@gmail.com"
+
+            }
+        ).encode('utf-8'))
+
+    def test_interactive_delete(self):
+        config.update({
+            "users": {
+                "interactive": True,
+                "get": {},
+                "post": {},
+                "delete": {},
+            }
+        })
+
+        self.app.post('/users/JohnDoe', data=json.dumps(
+            {
+                "name": "John Doe",
+                "email": "J.Don@email.com"
+            }
+        ).encode('utf-8'))
+
+        self.app.delete('/users/JohnDoe')
+
+        response = json.loads(self.app.get('/users').data)
+
+        self.assertNotIn("JohnDoe", response)
+
+
+class TestPathValidator(TestCase):
+    def test_simple_path_validation(self):
+        path = "/users/"
+        configuration = {
+            "users": {
+                "get": {}
+            }
+        }
+        paths, path_config, identifier = validate_path(path, configuration)
+        self.assertEqual(paths, ["users"])
+        self.assertEqual(path_config, configuration["users"])
+        self.assertEqual(identifier, None)
+
+    def test_nested_path_validation(self):
+        path = "/users/JohnDoe/posts/"
+        configuration = {
+            "users": {
+                "JohnDoe": {
+                    "posts": {
+                        "get": {}
+                    }
+                }
+            }
+        }
+
+        paths, path_config, identifier = validate_path(path, configuration)
+        self.assertEqual(paths, ["users", "JohnDoe", "posts"])
+        self.assertEqual(path_config, configuration["users"]["JohnDoe"]["posts"])
+        self.assertEqual(identifier, None)
+
+    def test_interactive_mode_path_validation(self):
+        path = "/users/JohnDoe/"
+        configuration = {
+            "users": {
+                "interactive": True,
+            }
+        }
+
+        paths, path_config, identifier = validate_path(path, configuration)
+        self.assertEqual(paths, ["users", "JohnDoe"])
+        self.assertEqual(path_config, configuration["users"])
+        self.assertEqual(identifier, "JohnDoe")
