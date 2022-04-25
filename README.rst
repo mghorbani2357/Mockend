@@ -27,13 +27,17 @@
 .. |lastrelease| image:: https://img.shields.io/github/release-date/mghorbani2357/Mockend   
     :alt: GitHub Release Date
 
+.. |codequality| image:: https://app.codacy.com/project/badge/Grade/c1e3c9bb67204f199026f4d6b480a5a9
+    :target: https://www.codacy.com/gh/mghorbani2357/Mockend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mghorbani2357/Mockend&amp;utm_campaign=Badge_Grade
+    :alt: Code quality
+
 *****************
 Mockend API
 *****************
 
 .. class:: center
 
- |license| |downloadrate| |downloads| |pypiversion| |format| |wheel| |lastcommit| |lastrelease|
+ |license| |codequality| |downloadrate| |downloads| |pypiversion| |format| |wheel| |lastcommit| |lastrelease|
 
 
 Mockend is a Python library that can be used to mock any REST API endpoint.
