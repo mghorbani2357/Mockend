@@ -1,9 +1,9 @@
-name: master
+name: main
 
 on: [push, pull_request]
 
 jobs:
-  master:
+  main:
     runs-on: ubuntu-latest
           
     steps:
@@ -23,7 +23,7 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
       - name: Unit Tests
-        run: coverage run -m unittest tests/mockend.py; coverage xml
+        run: coverage run -m unittest tests/test_mockend.py; coverage xml
 
       - name: Codacy Coverage
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml -t ${{ secrets.CODACY_TOKEN }}
