@@ -20,7 +20,6 @@
 .. |downloads| image:: https://static.pepy.tech/personalized-badge/mockend?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Downloads
     :target: https://pepy.tech/project/mockend
 
-
 .. |lastcommit| image:: https://img.shields.io/github/last-commit/mghorbani2357/Mockend 
     :alt: GitHub last commit
     
@@ -31,13 +30,20 @@
     :target: https://www.codacy.com/gh/mghorbani2357/Mockend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mghorbani2357/Mockend&amp;utm_campaign=Badge_Grade
     :alt: Code quality
 
+.. |codacycoverage| image:: https://app.codacy.com/project/badge/Coverage/c1e3c9bb67204f199026f4d6b480a5a9
+    :target: https://www.codacy.com/gh/mghorbani2357/Mockend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mghorbani2357/Mockend&amp;utm_campaign=Badge_Coverage
+    :alt: Code coverage
+
+.. |workflow| image:: https://img.shields.io/github/workflow/status/mghorbani2357/mockend/main?logo=github
+    :alt: GitHub Workflow Status
+
 *****************
 Mockend API
 *****************
 
 .. class:: center
 
- |license| |codequality| |downloadrate| |downloads| |pypiversion| |format| |wheel| |lastcommit| |lastrelease|
+ |license| |workflow| |codacycoverage| |codequality| |downloadrate| |downloads|  |pypiversion| |format| |wheel| |lastcommit| |lastrelease|
 
 
 Mockend is a Python library that can be used to mock any REST API endpoint.
@@ -58,21 +64,6 @@ It can be used to mock any REST API endpoint, and can be used to mock any HTTP m
 the library is very easy to use and easy to extend. It just need configuration file, then it
 will simulate the REST API response.
 
-Configuration examples
-=======================
-
-.. code-block:: json
-
-    {
-        "users": {
-            "get": {
-                "response": {
-                    "user_ids": [1, 2, 3]
-                }
-            }
-        }
-    }
-
 How to use
 =======================
 
@@ -89,3 +80,107 @@ How to use
     * Restarting with stat
     * Debugger is active!
     * Debugger PIN: 141-969-228
+
+
+Configuration examples
+=======================
+
+.. code-block:: json
+
+    {
+        "users": {
+            "get": {
+                "response": {
+                    "user_ids": [1, 2, 3]
+                }
+            }
+        }
+    }
+
+
+
+Nested endpoints
+=======================
+
+.. code-block:: json
+
+    {
+        "users": {
+            "JohnDoe": {
+                "get": {
+                    "response": {
+                        "name": "John Doe",
+                        "email": "J.Doe@email.com"
+                    }
+                }
+            }
+        }
+    }
+
+
+
+Delay endpoints
+=======================
+
+.. code-block:: json
+
+    {
+        "users": {
+            "get": {
+                "delay": 0.1,
+                "response": {
+                    "user_ids": [1, 2, 3]
+                }
+            }
+        }
+    }
+
+
+
+chunk response
+=======================
+
+.. code-block:: json
+
+    {
+        "users": {
+            "get": {
+                "chunked": True,
+                "chunk_size": 2,
+                "response": {
+                    "user_ids": [1, 2, 3]
+                }
+            }
+        }
+    }
+
+
+
+
+Dummy endpoint
+=======================
+
+.. code-block:: json
+
+    {
+        "users": {
+            "post": {
+                "dummy": True
+            }
+        }
+    }
+
+
+
+Interactive mode
+=======================
+
+.. code-block:: json
+
+    {
+        "users": {
+            "interactive": True,
+            "get": {},
+            "post": {}
+        }
+    }
