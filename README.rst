@@ -60,22 +60,13 @@ Configuration examples
 .. code-block:: json
 
     {
-      "user": {
-        "id": {
-          "3": {
-            "post": {
-              "status": 403,
-              "response": "User not authorized!"
+        "users": {
+            "get": {
+                "response": {
+                    "user_ids": [1, 2, 3]
+                }
             }
-           }
-          },
-        "get": {
-        "status": 200,
-        "response":{
-            "user-ids":[1,2,3],
-          }
         }
-      }
     }
 
 How to use

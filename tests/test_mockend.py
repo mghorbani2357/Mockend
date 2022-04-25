@@ -1,5 +1,6 @@
 import json
 import time
+from copy import deepcopy
 from unittest import TestCase
 from mockend import config, app, validate_path
 
@@ -28,7 +29,7 @@ class TestEndPoints(TestCase):
                     "get": {
                         "response": {
                             "name": "John Doe",
-                            "email": "J.Doe@test.com"
+                            "email": "J.Doe@email.com"
                         }
                     }
                 }
@@ -63,7 +64,7 @@ class TestEndPoints(TestCase):
         config.update({
             "users": {
                 "get": {
-                    "chucked": True,
+                    "chunked": True,
                     "chunk_size": 2,
                     "response": {
                         "user_ids": [1, 2, 3]
@@ -74,13 +75,50 @@ class TestEndPoints(TestCase):
 
         self.assertEqual(self.app.get('/users').data, b'{"user_ids": [1, 2, 3]}')
 
-    def test_pagination(self):
+    def test_interactive_mode_pagination(self):
         config.update({
             "users": {
-                "get": {
-                }
+                "interactive": True,
+                "pagination": True,
+                "get": {},
+                "post": {}
             }
         })
+
+        self.app.post('/users/JohnDoe', data=json.dumps(
+            {
+                "name": "John Doe",
+                "email": "J.Don@email.com"
+            }
+        ).encode('utf-8'))
+
+        self.app.post('/users/Alice', data=json.dumps(
+            {
+                "name": "Alice",
+                "email": "alice@email.com"
+            }
+        ).encode('utf-8'))
+
+        self.app.post('/users/Bob', data=json.dumps(
+            {
+                "name": "Bob",
+                "email": "bob@email.com"
+            }
+        ).encode('utf-8'))
+
+        print(self.app.get('/users?start=Alice&limit=2').data)
+
+        self.assertEqual(self.app.get('/users?start=Alice&limit=2').data, json.dumps(
+            {
+                "Alice":
+                    {
+                        "name": "Alice",
+                        "email": "alice@email.com"
+                    },
+                "Bob": {
+                    "name": "Bob",
+                    "email": "bob@email.com"}
+            }).encode('utf-8'))
 
     def test_invalid_path(self):
         self.assertEqual(self.app.get('/users/invalid').status_code, 404)
@@ -124,10 +162,16 @@ class TestEndPoints(TestCase):
 
         self.assertEqual(self.app.post('/users', data=request_body).data, request_body)
 
+    def test_interactive_invalid_path(self):
+        config.update({
+            "users": {
+                "interactive": True,
+                "get": {},
+                "post": {}
+            }
+        })
 
-class TestInteractiveMode(TestCase):
-    def setUp(self):
-        self.app = app.test_client()
+        self.assertEqual(self.app.get('/users/invalid').status_code, 404)
 
     def test_interactive_insert(self):
         config.update({

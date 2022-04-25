@@ -31,7 +31,7 @@ def validate_path(path, configuration):
             if configuration.get("interactive", False) and index + 1 == len(subpaths) - 1:
                 return subpaths, configuration, subpaths[index + 1]
         else:
-            return None, None
+            return None, None, None
 
     return subpaths, configuration, None
 
@@ -93,11 +93,11 @@ def mockend_service(path):
                     response_body = json.dumps(path_config['data'].get(identifier))
                 else:
                     if path_config.get('pagination', False):
-                        ordered_keys = sorted(list(data.keys()))
+                        ordered_keys = sorted(list(path_config['data'].keys()))
                         pagination_keys = ordered_keys[ordered_keys.index(request.args.get('start')):
                                                        ordered_keys.index(request.args.get('start')) +
                                                        int(request.args.get('limit'))]
-                        response_body = [path_config['data'].get(key) for key in pagination_keys]
+                        response_body = json.dumps({key: path_config['data'].get(key) for key in pagination_keys})
                     else:
                         response_body = json.dumps(path_config['data'])
 
