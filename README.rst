@@ -82,6 +82,9 @@ How to use
     * Debugger PIN: 141-969-228
 
 
+In endpoint configuration available method with their configuration can be used to mock any HTTP method.
+All configuration of response can be mock in method configuration.
+
 Configuration examples
 =======================
 
@@ -90,14 +93,18 @@ Configuration examples
     {
         "users": {
             "get": {
-                "response": {
-                    "user_ids": [1, 2, 3]
-                }
+                "headers": {...},
+                "status_code": "...",
+                "mimetype": "...",
+                "content_type": "...",
+                "direct_passthrough": "...",
+                "response": json_data
             }
         }
     }
 
 
+To define nested endpoint configuration just define the nested endpoint name in the endpoint name.
 
 Nested endpoints
 =======================
@@ -107,17 +114,14 @@ Nested endpoints
     {
         "users": {
             "JohnDoe": {
-                "get": {
-                    "response": {
-                        "name": "John Doe",
-                        "email": "J.Doe@email.com"
-                    }
+                "get": {...}
                 }
             }
         }
     }
 
 
+To delay the response of endpoint just define delay attribute with a float value.
 
 Delay endpoints
 =======================
@@ -128,14 +132,13 @@ Delay endpoints
         "users": {
             "get": {
                 "delay": 0.1,
-                "response": {
-                    "user_ids": [1, 2, 3]
+                ...
                 }
             }
         }
     }
 
-
+To generate chuck response set the chuck attribute with a True value and chunk size in chunk_size attribute.
 
 chunk response
 =======================
@@ -147,15 +150,13 @@ chunk response
             "get": {
                 "chunked": True,
                 "chunk_size": 2,
-                "response": {
-                    "user_ids": [1, 2, 3]
-                }
+                ...
             }
         }
     }
 
 
-
+To simulate dummy to generate same response for same request just define dummy attribute with a True value.
 
 Dummy endpoint
 =======================
@@ -170,7 +171,9 @@ Dummy endpoint
         }
     }
 
-
+Interactive mode is available to interact with the mockend server.
+To start interactive mode just run the following command.
+It is easy to use. Just define method and send request to create, update, delete or retrieve data
 
 Interactive mode
 =======================
@@ -180,7 +183,8 @@ Interactive mode
     {
         "users": {
             "interactive": True,
-            "get": {},
-            "post": {}
+            "get": {...},
+            "post": {...}
+            "data" : {...}
         }
     }
