@@ -37,13 +37,17 @@
 .. |workflow| image:: https://img.shields.io/github/workflow/status/mghorbani2357/mockend/main?logo=github
     :alt: GitHub Workflow Status
 
+.. |readthedocs| image:: https://readthedocs.org/projects/mockend/badge/?version=latest
+    :target: https://mockend.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 *****************
 Mockend API
 *****************
 
 .. class:: center
 
- |license| |workflow| |codacycoverage| |codequality| |downloadrate| |downloads|  |pypiversion| |format| |wheel| |lastcommit| |lastrelease|
+ |license| |workflow| |readthedocs| |codacycoverage| |codequality| |downloadrate| |downloads| |pypiversion| |format| |wheel| |lastcommit| |lastrelease|
 
 
 Mockend is a Python library that can be used to mock any REST API endpoint.
@@ -115,7 +119,6 @@ Nested endpoints
         "users": {
             "JohnDoe": {
                 "get": {...}
-                }
             }
         }
     }
@@ -133,7 +136,6 @@ Delay endpoints
             "get": {
                 "delay": 0.1,
                 ...
-                }
             }
         }
     }
@@ -188,3 +190,5 @@ Interactive mode
             "data" : {...}
         }
     }
+
+Documentation: https://mghorbani2357.github.io/Mockend/
