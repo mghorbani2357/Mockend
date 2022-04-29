@@ -23,7 +23,7 @@ jobs:
         if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
       - name: Unit Tests
-        run: coverage run -m unittest tests/mockend.py; coverage xml
+        run: coverage run -m unittest tests/test_mockend.py; coverage xml
 
       - name: Publish Package
         run: |
