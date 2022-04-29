@@ -3,7 +3,7 @@
 Changelog
 =========
 
-v0.4.0
+v0.4.1
 ------
 Release Date: 2022-04-29
     * New Features:
