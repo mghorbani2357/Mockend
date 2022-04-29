@@ -3,7 +3,7 @@
 Changelog
 =========
 
-v0.0.4
+v0.4.0
 ------
 Release Date: 2022-04-29
     * New Features:
@@ -14,7 +14,7 @@ Release Date: 2022-04-29
         * Interactive mode
         * Dummy mode
 
-v0.0.1
+v0.1.1
 ------
 Release Date: 2022-04-21
     * Basic mock api.
