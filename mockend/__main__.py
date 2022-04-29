@@ -2,7 +2,7 @@ import argparse
 import json
 from . import app, config
 
-parser = argparse.ArgumentParser(prog='PROG', description='Mockend Service')
+parser = argparse.ArgumentParser(prog='mockend', description='Mockend Service')
 parser.add_argument('-c', '--config', metavar='', type=str, required=True, default='config.json', help='Path to the configuration file.')
 parser.add_argument('-i', '--host', metavar='', type=str, required=False, default='localhost', help='Host address')
 parser.add_argument('-p', '--port', metavar='', type=int, required=False, default=5555, help='Port number')

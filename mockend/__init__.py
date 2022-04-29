@@ -36,7 +36,7 @@ def validate_path(path, configuration):
     return subpaths, configuration, None
 
 
-def generate_chunk(data, chunk_size):
+def generate_chunk(data, chunk_size=1024):
     """
     Args:
         data(str): incoming request data
