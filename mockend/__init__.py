@@ -36,15 +36,17 @@ def validate_path(path, configuration):
     return subpaths, configuration, None
 
 
-def generate_chunk(data, chunk_size=1024):
+def generate_chunk(data, chunk_size=1024, chuck_delay=0):
     """
     Args:
         data(str): incoming request data
         chunk_size(int): chunk size
+        chuck_delay(int): delay between chunks
     Returns:
         (str): returns chunked data
     """
     for i in range(0, len(data), chunk_size):
+        time.sleep(chuck_delay)
         yield data[i:i + chunk_size]
 
 
@@ -113,7 +115,7 @@ def mockend_service(path):
                 del path_config['data'][identifier]
 
         if method_config.get("chunked", False):
-            response_body = generate_chunk(response_body, method_config.get("chunk_size", 1))
+            response_body = generate_chunk(response_body, method_config.get("chunk_size", 1024), method_config.get("chunk_size", 0))
 
         return Response(
             response=response_body,
