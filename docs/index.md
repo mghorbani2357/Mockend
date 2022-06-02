@@ -13,12 +13,14 @@ Create configuration file. (`config.json`)
 ```json
 {
   "endpoint": {
-    "status": 200,
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "response": {
-      "message": "success"
+    "get":{	  
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "response": {
+        "message": "success"
+      }
     }
   }
 }
